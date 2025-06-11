@@ -40,6 +40,19 @@ users:
       - ${trimspace(data.local_file.ssh_public_key.content)}
     sudo: ALL=(ALL) NOPASSWD:ALL
 
+#device_aliases: {data_disk: /dev/sdb}
+#disk_setup:
+#  data_disk:
+#   layout: [100]
+#    overwrite: true
+#    table_type: gpt
+#fs_setup:
+#  - {cmd: mkfs -t %(filesystem)s -L %(label)s %(device)s, device: data_disk.1, filesystem: ext4,
+#  label: data}
+#mounts:
+#  - [data_disk.1, /mnt/data]
+
+
 write_files:
   - path: /etc/ssh/sshd_config.d/60-cloudimg-settings.conf
     permissions: 0640
