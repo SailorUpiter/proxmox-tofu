@@ -112,7 +112,7 @@ variable "netbox_api_url" {
   type        = string
   sensitive   = true
   validation {
-    condition     = can(regex("(?i)^http[s]?://.*/api", var.netbox_api_url))
+    condition     = can(regex("(?i)^http[s]?://.*/", var.netbox_api_url))
     error_message = "Netbox API Endpoint Invalid. Check URL - Scheme and Path required."
   }
 }
@@ -132,7 +132,12 @@ variable "tenant" {
   type        = string
   default     = "trustinfo"
 }
-variable "disk_size" {
+variable "os_disk_size" {
+  description = "Size disk in Gb"
+  type        = number
+  default     = "20"
+}
+variable "data_disk_size" {
   description = "Size disk in Gb"
   type        = number
   default     = "20"

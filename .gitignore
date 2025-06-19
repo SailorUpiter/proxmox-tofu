@@ -1,0 +1,6 @@
+/home/ubadmin/tofu/proxmox/template/values.tfvars
+values.tfvars
+./.terraform.lock.hcl
+./.terraform/*
+/home/ubadmin/tofu/proxmox/template/.terraform
+/home/ubadmin/tofu/proxmox/template/.terraform.lock.hcl
