@@ -12,6 +12,10 @@ terraform {
     time = {
       source = "registry.terraform.io/hashicorp/time"
     }
+    netbox = {
+      source = "registry.terraform.io/e-breuninger/netbox"
+      version = "4.0.0"
+    }
   }
 }
 
@@ -23,4 +27,9 @@ provider "proxmox" {
     agent    = true
     username = "root"
   }
+}
+
+provider "netbox" {
+  server_url = var.netbox_api_url
+  api_token  = var.netbox_token_secret
 }

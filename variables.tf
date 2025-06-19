@@ -64,7 +64,11 @@ variable "snippet_storage" {
   type        = string
   default     = "local"
 }
-
+variable "image_storage" {
+  description = "Storage contain vm image"
+  type = string
+  default = "local"
+}
 variable "vm_hostname" {
   description = "VM hostanme "
   type        = string
@@ -101,4 +105,45 @@ variable "cloud_init_user" {
   description = "Username cloud-init user"
   type        = string
   default     = "ubadmin"
+}
+
+variable "netbox_api_url" {
+  description = "Proxmox API Endpoint, e.g. 'https://netbox.example.com/api'"
+  type        = string
+  sensitive   = true
+  validation {
+    condition     = can(regex("(?i)^http[s]?://.*/api", var.netbox_api_url))
+    error_message = "Netbox API Endpoint Invalid. Check URL - Scheme and Path required."
+  }
+}
+
+variable "netbox_token_secret" {
+  description = "Netbox API Token Value."
+  sensitive   = true
+} 
+
+variable "cluster_name" {
+  description = "Name Proxmox cluster in Netbox"
+  type        = string
+  default     = "pve-cluster"
+}
+variable "tenant" {
+  description = "Name tenant in Netbox"
+  type        = string
+  default     = "trustinfo"
+}
+variable "disk_size" {
+  description = "Size disk in Gb"
+  type        = number
+  default     = "20"
+}
+variable "cpu_num" {
+  description = "Number of vCpu"
+  type        = number
+  default     = "4"
+}
+variable "memory_mb" {
+  description = "Memory in Mb"
+  type =  number
+  default = "4096"
 }
