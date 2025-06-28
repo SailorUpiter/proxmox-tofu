@@ -4,7 +4,7 @@ data "netbox_cluster" "cluster_name" {
 data "netbox_tenant" "tenant" {
   name = var.tenant
 }
-resource "netbox_virtual_machine" "basic_vm" {
+resource "netbox_virtual_machine" "vm" {
     cluster_id   = data.netbox_cluster.cluster_name.id
     name         = var.vm_hostname
     disk_size_mb = (var.os_disk_size + var.data_disk_size) * 1000
@@ -14,7 +14,7 @@ resource "netbox_virtual_machine" "basic_vm" {
 }
 resource "netbox_interface" "basic_int" {
   name               = "eth0"
-  virtual_machine_id = netbox_virtual_machine.basic_vm.id
+  virtual_machine_id = netbox_virtual_machine.vm.id
 }
 
 resource "netbox_ip_address" "address" {
@@ -28,12 +28,17 @@ resource "netbox_ip_address" "address" {
 resource "netbox_virtual_disk" "os_disk" {
   name               = "OS-disk"
   description        = "OS disk"
-  size_mb            = netbox_virtual_machine.basic_vm.disk_size_mb
-  virtual_machine_id = netbox_virtual_machine.basic_vm.id
+  size_mb            = var.os_disk_size * 1000
+  virtual_machine_id = netbox_virtual_machine.vm.id
 }
 resource "netbox_virtual_disk" "data_disk" {
   name               = "Data-disk"
   description        = "Data disk"
   size_mb            = var.data_disk_size * 1000
-  virtual_machine_id = netbox_virtual_machine.basic_vm.id
+  virtual_machine_id = netbox_virtual_machine.vm.id
+}
+resource "netbox_primary_ip" "site-trustinfo_ip_v4" {
+  ip_address_id      = netbox_ip_address.address.id
+  virtual_machine_id = netbox_virtual_machine.vm.id
+  ip_address_version = 4 ## ipv4
 }
