@@ -84,7 +84,11 @@ variable "vm_id" {
   type        = number
   default     = "10000"
 }
-
+variable "network_int" {
+  description = "Network interface"
+  type        = string
+  default     = "vmbr0"
+}
 variable "ip_address" {
   description = "ip address CIDR/prefix"
   type        = string
