@@ -21,7 +21,7 @@ resource "netbox_interface" "basic_int" {
 
 resource "netbox_ip_address" "address" {
   count                        = var.count_number
-  ip_address                   = "${var.ip_address}.${( var.ip_address + count.index)}${var.mask}"
+  ip_address                   = "${var.network}.${ var.ip_address + count.index}${var.mask}"
   status                       = "active"
   virtual_machine_interface_id = netbox_interface.basic_int[count.index].id
   tenant_id                    = data.netbox_tenant.tenant.id
