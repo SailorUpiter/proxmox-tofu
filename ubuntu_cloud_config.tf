@@ -126,6 +126,6 @@ power_state:
 
 EOF
 
-    file_name = "${var.vm_hostname}.cloud-config.yaml"
+    file_name = "${var.vm_hostname}-${count.index + 1}.cloud-config.yaml"
   }
 }
