@@ -3,6 +3,7 @@ data "local_file" "ssh_public_key" {
 }
 
 resource "proxmox_virtual_environment_file" "ubuntu_cloud_init" {
+  count        = var.count_number
   content_type = "snippets"
   datastore_id = var.snippet_storage
   node_name    = var.node_name
@@ -10,8 +11,8 @@ resource "proxmox_virtual_environment_file" "ubuntu_cloud_init" {
   source_raw {
     data = <<-EOF
 #cloud-config
-hostname: ${var.vm_hostname}
-fqdn: ${var.vm_hostname}.${var.vm_domain}
+hostname: ${var.vm_hostname}-${count.index + 1}
+fqdn: ${var.vm_hostname}-${count.index + 1}.${var.vm_domain}
 manage_etc_hosts: true
 
 package_update: true

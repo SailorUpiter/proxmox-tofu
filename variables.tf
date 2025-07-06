@@ -20,6 +20,12 @@ variable "pve_api_url" {
   }
 }
 
+variable "count_number" {
+  description = "Number of iterations to create resource"
+  type        = number
+  default     = 1
+}
+
 variable "cloud_init_user_password" {
   description = "Password from user in custom cloud-init file."
   sensitive   = true
@@ -89,11 +95,20 @@ variable "network_int" {
   type        = string
   default     = "vmbr0"
 }
-variable "ip_address" {
-  description = "ip address CIDR/prefix"
+
+variable "network" {
+  description = "Network address without last octet A.B.C."
   type        = string
 }
-
+variable "ip_address" {
+  description = "ip address last octet"
+  type        = number
+}
+variable "mask" {
+  description = "network mask /prefix"
+  type        = string
+  default     = "/24"
+}
 variable "ip_gateway" {
   description = "ip address gateway CIDR"
   type        = string
