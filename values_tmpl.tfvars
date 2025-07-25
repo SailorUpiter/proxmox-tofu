@@ -41,3 +41,6 @@ ci_ssh_key                  = "/home/ubadmin/.ssh/id_ed25519.pub" # Файл в 
 #Netbox
 netbox_api_url = "http://ip-addr-netbox-server:8000/"
 netbox_token_secret = "netbox-token"
+
+#Zabbix
+zabbix_server               = "10.20.15.42"

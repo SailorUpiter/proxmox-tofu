@@ -15,13 +15,24 @@ hostname: ${var.vm_hostname}-${count.index + 1}
 fqdn: ${var.vm_hostname}-${count.index + 1}.${var.vm_domain}
 manage_etc_hosts: true
 
+apt:
+    sources_list: |
+      Types: deb
+      URIs: https://repo.zabbix.com/zabbix/7.0/ubuntu/dists/jammy/
+      Suites: $RELEASE
+      Components: main
+
+
 package_update: true
+package_upgrade: true
+package_reboot_if_required: true
 packages:
   - iptables-persistent
   - fail2ban
   - auditd
   - qemu-guest-agent
   - net-tools
+  - zabbix-agent2
 
 chpasswd:
   list: |
@@ -75,6 +86,7 @@ write_files:
       :FORWARD DROP [0:0]
       :OUTPUT ACCEPT [0:0]
       -A INPUT -p tcp -m tcp --dport ${var.ci_ssh_port} -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 10050 -j ACCEPT
       -A INPUT -i lo -j ACCEPT
       -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
       -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
@@ -112,7 +124,11 @@ write_files:
       -a always,exit -F arch=x86_64 -S chmod -S fchmod -S chown -S fchown -S lchown -F auid!=unset -F key=access-rights-modification
       
 runcmd:
-    - apt upgrade
+    - sudo wget https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu22.04_all.deb
+    - sudo dpkg -i zabbix-release_latest_7.4+ubuntu22.04_all.deb
+    - apt update
+    - sudo apt install zabbix-agent2 
+    - sudo sed -i 's/^Server=.*$/Server=${var.zabbix_server}/' /etc/zabbix/zabbix_agent2.conf
     - timedatectl set-timezone Europe/Moscow
     - systemctl enable qemu-guest-agent fail2ban
     - systemctl start qemu-guest-agent

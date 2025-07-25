@@ -1,7 +1,7 @@
 
 resource "proxmox_virtual_environment_vm" "template" { #описание ресурса в виде ресурс "вид ресурса" "название"
   count       = var.count_number           # Счетчик цикла. Цикл используется для создания сразу нескольких ВМ
-  name        = "${var.vm_hostname}-cp-${count.index + 1}"   # Имя виртуальной машины
+  name        = "${var.vm_hostname}-${count.index + 1}"   # Имя виртуальной машины
   description = "Managed by Terraform. Aded in Netbox" # Описание ВМ
   tags        = ["terraform", "ubuntu"] # Теги в проксмоксе. Для ВМ созданных терраформом тег terraform обязательный
   bios        = var.bios

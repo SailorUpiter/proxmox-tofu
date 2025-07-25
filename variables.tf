@@ -171,3 +171,21 @@ variable "memory_mb" {
   type =  number
   default = "4096"
 }
+
+variable "zabbix_server" {
+  description = "ip addr or dns name zabbix server"
+  type =  string
+  default = "10.20.15.42"
+}
+variable "zabbix_server_url" {
+  description = "ip addr or dns name zabbix server api"
+  type =  string
+}
+variable "zabbix_login" {
+  description = "Username zabbix admin"
+  type =  string
+}
+variable "zabbix_password" {
+  description = "Password zabbix admin"
+  type =  string
+}

@@ -16,6 +16,10 @@ terraform {
       source = "registry.terraform.io/e-breuninger/netbox"
       version = "4.0.0"
     }
+    zabbix = {
+      source = "registry.terraform.io/kgeroczi/zabbix"
+      version = "0.1.6"
+    }
   }
 }
 
@@ -32,4 +36,17 @@ provider "proxmox" {
 provider "netbox" {
   server_url = var.netbox_api_url
   api_token  = var.netbox_token_secret
+}
+provider "zabbix" {
+  # Required
+  username = var.zabbix_login
+  password = var.zabbix_password
+  url = var.zabbix_server_url
+  
+  # Disable TLS verfication (false by default)
+  tls_insecure = true
+
+  # Serialize Zabbix API calls (false by default)
+  # Note: race conditions have been observed, enable this if required
+  serialize = true
 }
