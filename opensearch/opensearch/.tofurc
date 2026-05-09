@@ -1,7 +1,8 @@
 provider_installation {
   network_mirror {
 #    url = "https://terraform-mirror.mcs.mail.ru/"
-    url = "https://terraform-mirror.yandexcloud.net/"
+#    url = "https://terraform-mirror.yandexcloud.net/"
+     url = "https://registry.nationalcdn.ru/"
     include = ["registry.terraform.io/*/*"]
   }
   direct {

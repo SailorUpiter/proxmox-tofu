@@ -32,6 +32,7 @@ provider "proxmox" {
   ssh {
     agent    = true
     username = "root"
+    private_key = file("C:\\Users\\medik\\Documents\\ssh\\id_ed25519")
   }
 }
 

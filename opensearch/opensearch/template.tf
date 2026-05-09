@@ -73,7 +73,7 @@ resource "proxmox_virtual_environment_vm" "template" { #описание рес�
     user_data_file_id = proxmox_virtual_environment_file.ubuntu_cloud_init[count.index].id # Переменная в которую передаем содержание файла облачной иницилизации
 
     dns {                     # Секция настройки DNS
-      servers = ["8.8.8.8", "192.168.1.2"] # IP адреса серверов имен
+      servers = ["8.8.8.8", "8.8.4.4"] # IP адреса серверов имен
       domain  = var.vm_domain # Обслуживаемый домен
     }
     ip_config {               # Секция настройки IP 
@@ -88,7 +88,7 @@ resource "proxmox_virtual_environment_vm" "template" { #описание рес�
   network_device {            # Секция для настройки сетевого адаптера
     bridge    = var.network_int  # Виртуальный сетевой интерфейс, изменить на свой 
     vlan_id   = "0"           # Тег VLAN трафика. (Тег должен быть настроен на коммутаторе)
-    enabled   = true          # Включить интерфейс
+#   enabled   = true          # Включить интерфейс
     firewall  = false         # Включить Фаерволл на интерфейсе
     model     = "virtio"      # Модель интерфейса
     mtu       = 1             # Размер MTU (количество байт в пакете)
