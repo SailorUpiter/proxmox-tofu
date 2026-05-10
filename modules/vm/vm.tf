@@ -1,34 +1,10 @@
-
-provider "proxmox" {
-  endpoint  = var.pve_api_url
-  api_token = "${var.pve_token_id}=${var.pve_token_secret}"
-  insecure  = true
-  ssh {
-    agent    = true
-    username = "root"
-    private_key = file("C:\\Users\\medik\\Documents\\ssh\\id_ed25519")
+terraform {
+  required_providers {
+    proxmox = {
+      source = "bpg/proxmox"
+    }
   }
 }
-
-
-resource "tls_private_key" "vm_ssh_key" {
-  algorithm = "ED25519" 
-}
-
-# Сохраняем приватный ключ локально
-resource "local_sensitive_file" "private_key" {
-  content         = tls_private_key.vm_ssh_key.private_key_openssh
-  filename        = var.private_key_file
-  file_permission = "0600"
-}
-
-# Сохраняем публичный ключ локально
-resource "local_file" "public_key" {
-  content  = tls_private_key.vm_ssh_key.public_key_openssh
-  filename = var.public_key_file
-}
-
-
 resource "proxmox_virtual_environment_file" "ubuntu_cloud_init" {
   count        = length(var.vm_hostname)
   content_type = "snippets"
@@ -63,7 +39,7 @@ users:
     groups: sudo
     shell: /bin/bash
     ssh-authorized-keys:
-      - ${trimspace(data.local_file.ssh_public_key.content)}
+      - ${var.ci_ssh_key}
     sudo: ALL=(ALL) NOPASSWD:ALL
 
 device_aliases: {data_disk: /dev/sdb}
@@ -85,7 +61,7 @@ write_files:
     content: |
       Port ${var.ci_ssh_port}
       PermitRootLogin no
-      PasswordAuthentication no
+      PasswordAuthentication yes
 
 runcmd:
     - systemctl enable qemu-guest-agent fail2ban
@@ -142,7 +118,7 @@ resource "proxmox_virtual_environment_vm" "template" { #описание рес�
     datastore_id      = var.storage_pool # Хранилище для файла облачной иницилизации, обязательно должна быть включена категория контента snippets
     user_data_file_id = proxmox_virtual_environment_file.ubuntu_cloud_init[count.index].id # Переменная в которую передаем содержание файла облачной иницилизации
     dns {                     # Секция настройки DNS
-      servers = var.dns_servers # IP адреса серверов имен
+      servers = var.dns_servers  # IP адреса серверов имен
       domain  = var.vm_domain # Обслуживаемый домен
     }
     ip_config {               # Секция настройки IP 
