@@ -1,15 +1,13 @@
 # bgp-example/variables.tf
-## Provider Login Variables
+## Proxmox 
 variable "pve_token_id" {
   description = "Proxmox API Token Name."
   sensitive   = true
 }
-
 variable "pve_token_secret" {
   description = "Proxmox API Token Value."
   sensitive   = true
 }
-
 variable "pve_api_url" {
   description = "Proxmox API Endpoint, e.g. 'https://pve.example.com/api2/json'"
   type        = string
@@ -19,19 +17,48 @@ variable "pve_api_url" {
     error_message = "Proxmox API Endpoint Invalid. Check URL - Scheme and Path required."
   }
 }
+variable "node_name" {
+  description = "Hostname proxmox node"
+  type        = string
+  default     = "pve-1"
+}
+# Ssh keys
+variable "private_key_file" {
+  description = "SSH privte key file"
+  type        = string
+}
+variable "public_key_file" {
+  description = "SSH public key file"
+  type        = string
+}
+# Cloud-init
+variable "cloud_init_user" {
+  description = "Username cloud-init user"
+  type        = string
+  default     = "ubadmin"
+}
+variable "cloud_init_user_password" {
+  description = "Password from user in custom cloud-init file."
+  sensitive   = true
+  default     = "Password"
+}
+variable "ci_ssh_key" {
+  description = "File path to SSH key for 'default' user, e.g. `~/.ssh/id_ed25519.pub`."
+  type        = string
+  default     = null
+}
+variable "ci_ssh_port" {
+  description = "Port for connecting to the server via ssh"
+  type        = string
+  default     = "22"
+}
 
+# Vm settings
 variable "count_number" {
   description = "Number of iterations to create resource"
   type        = number
   default     = 1
 }
-
-variable "cloud_init_user_password" {
-  description = "Password from user in custom cloud-init file."
-  sensitive   = true
-}
-
-## VM Variables
 variable "bios" {
   description = "VM bios, setting to `ovmf` will automatically create a EFI disk."
   type        = string
@@ -41,30 +68,23 @@ variable "bios" {
     error_message = "Invalid bios setting: ${var.bios}. Valid options: 'seabios' or 'ovmf'."
   }
 }
-
-variable "ci_ssh_key" {
-  description = "File path to SSH key for 'default' user, e.g. `~/.ssh/id_ed25519.pub`."
+variable "vm_hostname" {
+  description = "VM hostanme "
   type        = string
-  default     = null
+  default     = ["vm-1"]
+}
+variable "vm_domain" {
+  description = "VM domain "
+  type        = string
+  default     = "example.com"
 }
 
-variable "ci_ssh_port" {
-  description = "Port for connecting to the server via ssh"
-  type        = string
-  default     = "22"
-}
-
-variable "node_name" {
-  description = "Hostname proxmox node"
-  type        = string
-}
-
+# Storage
 variable "storage_pool" {
   description = "Storage name "
   type        = string
   default     = "local-lvm"
 }
-
 variable "snippet_storage" {
   description = "Storage name "
   type        = string
@@ -75,120 +95,29 @@ variable "image_storage" {
   type = string
   default = "local"
 }
-variable "vm_hostname" {
-  description = "VM hostanme "
-  type        = string
-}
-
-variable "vm_domain" {
-  description = "VM domain "
-  type        = string
-}
-
-variable "vm_id" {
-  description = "VM_ID"
-  type        = number
-  default     = "10000"
-}
-variable "network_int" {
-  description = "Network interface"
-  type        = string
-  default     = "vmbr0"
-}
-
-variable "network" {
-  description = "Network address without last octet A.B.C."
-  type        = string
-}
-variable "ip_address" {
-  description = "ip address last octet"
-  type        = number
-}
-variable "mask" {
-  description = "network mask /prefix"
-  type        = string
-  default     = "/24"
-}
-variable "ip_gateway" {
-  description = "ip address gateway CIDR"
-  type        = string
-}
-
 variable "stor_file_format" {
   description = "Format virtual disk"
   type        = string
   default     = "raw"
 }
 
-variable "cloud_init_user" {
-  description = "Username cloud-init user"
+# Network
+variable "network_int" {
+  description = "Network interface"
   type        = string
-  default     = "ubadmin"
+  default     = "vmbr0"
 }
-
-variable "netbox_api_url" {
-  description = "Proxmox API Endpoint, e.g. 'https://netbox.example.com/api'"
+variable "ip_addr" {
+  description = "Network address "
   type        = string
-  sensitive   = true
-  validation {
-    condition     = can(regex("(?i)^http[s]?://.*/", var.netbox_api_url))
-    error_message = "Netbox API Endpoint Invalid. Check URL - Scheme and Path required."
-  }
+  default = ["192.168.1.2/24"]
 }
-
-variable "netbox_token_secret" {
-  description = "Netbox API Token Value."
-  sensitive   = true
-} 
-
-variable "cluster_name" {
-  description = "Name Proxmox cluster in Netbox"
+variable "dns_servers" {
+  description = "Network address "
   type        = string
-  default     = "pve-cluster"
+  default = ["8.8.8.8"]
 }
-variable "tenant" {
-  description = "Name tenant in Netbox"
+variable "ip_gateway" {
+  description = "ip address gateway CIDR"
   type        = string
-  default     = "trustinfo"
-}
-variable "os_disk_size" {
-  description = "Size disk in Gb"
-  type        = number
-  default     = "20"
-}
-variable "data_disk_size" {
-  description = "Size disk in Gb"
-  type        = number
-  default     = "20"
-}
-variable "cpu_num" {
-  description = "Number of vCpu"
-  type        = number
-  default     = "4"
-}
-variable "memory_mb" {
-  description = "Memory in Mb"
-  type =  number
-  default = "4096"
-}
-
-variable "zabbix_server" {
-  description = "ip addr or dns name zabbix server"
-  type =  string
-  default = "10.20.15.42"
-}
-variable "zabbix_server_url" {
-  description = "ip addr or dns name zabbix server api"
-  type =  string
-  default = "10.20.15.42"
-}
-variable "zabbix_login" {
-  description = "Username zabbix admin"
-  type =  string
-  default = "admin"
-}
-variable "zabbix_password" {
-  description = "Password zabbix admin"
-  type =  string
-  default = "password"
 }
