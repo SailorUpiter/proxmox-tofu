@@ -10,3 +10,8 @@ variable "public_key_file" {
   type        = string
   default     = "./"
 }
+variable "key_name" {
+  description = "SSH key name"
+  type        = list(string)
+  default     = []
+}
