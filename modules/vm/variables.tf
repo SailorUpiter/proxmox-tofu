@@ -90,7 +90,7 @@ variable "os_disk_size" {
 }
 variable "data_disk_size" {
   description = "Size disk in Gb"
-  default     = null
+  default     = "0"
 }
 # Network
 variable "network_int" {

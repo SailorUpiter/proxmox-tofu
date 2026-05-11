@@ -107,12 +107,15 @@ resource "proxmox_virtual_environment_vm" "template" { #описание рес�
     size         = var.os_disk_size        # Размер диск в Gb
     file_format  = var.stor_file_format # Формат файла диска (Raw сырые данные в виде блоков, QCOW2 данные пишутся в файл)
   }
-  disk {                      # Секция для настройки жесткого диска ВМ. Для добавления второго диска добавить еще секцию disk и увеличить счетчик интерфеса
-    datastore_id = var.storage_pool # Имя хранилища. Хранилище должно быть активно на ноде, на которой создаем ВМ
-    interface    = "scsi1"  # Интерфейс для подключения диска (эмуляция шины или рейд контроллера). virtio современный интерфейс.
-    size         = var.data_disk_size          # Размер диск в Gb
-    file_format  = var.stor_file_format # Формат файла диска (Raw сырые данные в виде блоков, QCOW2 данные пишутся в файл)
+  dynamic "disk" {
+    for_each = var.data_disk_size > 0 ? [1] : []
+    content {
+      datastore_id = var.storage_pool
+      interface    = "scsi1"
+      size         = var.data_disk_size
+      file_format  = var.stor_file_format
   }
+}
   initialization {            # Секция для параметров Cloud-init. Добавляет в cdrom файл для облачной иницилизации. 
     interface         = "scsi2" # Интерфейс для подключения cd-rom для клауд инит файла
     datastore_id      = var.storage_pool # Хранилище для файла облачной иницилизации, обязательно должна быть включена категория контента snippets
