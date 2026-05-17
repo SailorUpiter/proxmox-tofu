@@ -3,6 +3,7 @@ data "local_file" "ssh_public_key" {
 }
 
 resource "proxmox_virtual_environment_file" "ubuntu_cloud_init" {
+  count        = var.count_number
   content_type = "snippets"
   datastore_id = var.snippet_storage
   node_name    = var.node_name
@@ -10,17 +11,21 @@ resource "proxmox_virtual_environment_file" "ubuntu_cloud_init" {
   source_raw {
     data = <<-EOF
 #cloud-config
-hostname: ${var.vm_hostname}
-fqdn: ${var.vm_hostname}.${var.vm_domain}
+hostname: ${var.vm_hostname}-${count.index + 1}
+fqdn: ${var.vm_hostname}-${count.index + 1}.${var.vm_domain}
 manage_etc_hosts: true
 
+
 package_update: true
+package_upgrade: true
+package_reboot_if_required: true
 packages:
   - iptables-persistent
   - fail2ban
   - auditd
   - qemu-guest-agent
   - net-tools
+  - zabbix-agent2
 
 chpasswd:
   list: |
@@ -40,17 +45,17 @@ users:
       - ${trimspace(data.local_file.ssh_public_key.content)}
     sudo: ALL=(ALL) NOPASSWD:ALL
 
-#device_aliases: {data_disk: /dev/sdb}
-#disk_setup:
-#  data_disk:
-#   layout: [100]
-#    overwrite: true
-#    table_type: gpt
-#fs_setup:
-#  - {cmd: mkfs -t %(filesystem)s -L %(label)s %(device)s, device: data_disk.1, filesystem: ext4,
-#  label: data}
-#mounts:
-#  - [data_disk.1, /mnt/data]
+device_aliases: {data_disk: /dev/sdb}
+disk_setup:
+  data_disk:
+    layout: [100]
+    overwrite: true
+    table_type: gpt
+fs_setup:
+  - {cmd: mkfs -t %(filesystem)s -L %(label)s %(device)s, device: data_disk.1, filesystem: ext4,
+  label: data}
+mounts:
+  - [data_disk.1, /mnt/data]
 
 
 write_files:
@@ -74,6 +79,7 @@ write_files:
       :FORWARD DROP [0:0]
       :OUTPUT ACCEPT [0:0]
       -A INPUT -p tcp -m tcp --dport ${var.ci_ssh_port} -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 10050 -j ACCEPT
       -A INPUT -i lo -j ACCEPT
       -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
       -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
@@ -111,7 +117,11 @@ write_files:
       -a always,exit -F arch=x86_64 -S chmod -S fchmod -S chown -S fchown -S lchown -F auid!=unset -F key=access-rights-modification
       
 runcmd:
-    - apt upgrade
+    - sudo wget https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu22.04_all.deb
+    - sudo dpkg -i zabbix-release_latest_7.4+ubuntu22.04_all.deb
+    - apt update
+    - sudo apt install zabbix-agent2 
+    - sudo sed -i 's/^Server=.*$/Server=${var.zabbix_server}/' /etc/zabbix/zabbix_agent2.conf
     - timedatectl set-timezone Europe/Moscow
     - systemctl enable qemu-guest-agent fail2ban
     - systemctl start qemu-guest-agent
@@ -125,6 +135,6 @@ power_state:
 
 EOF
 
-    file_name = "${var.vm_hostname}.cloud-config.yaml"
+    file_name = "${var.vm_hostname}-${count.index + 1}.cloud-config.yaml"
   }
 }

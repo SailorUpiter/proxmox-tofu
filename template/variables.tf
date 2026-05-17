@@ -20,6 +20,12 @@ variable "pve_api_url" {
   }
 }
 
+variable "count_number" {
+  description = "Number of iterations to create resource"
+  type        = number
+  default     = 1
+}
+
 variable "cloud_init_user_password" {
   description = "Password from user in custom cloud-init file."
   sensitive   = true
@@ -64,7 +70,11 @@ variable "snippet_storage" {
   type        = string
   default     = "local"
 }
-
+variable "image_storage" {
+  description = "Storage contain vm image"
+  type = string
+  default = "local"
+}
 variable "vm_hostname" {
   description = "VM hostanme "
   type        = string
@@ -80,12 +90,25 @@ variable "vm_id" {
   type        = number
   default     = "10000"
 }
-
-variable "ip_address" {
-  description = "ip address CIDR/prefix"
+variable "network_int" {
+  description = "Network interface"
   type        = string
+  default     = "vmbr0"
 }
 
+variable "network" {
+  description = "Network address without last octet A.B.C."
+  type        = string
+}
+variable "ip_address" {
+  description = "ip address last octet"
+  type        = number
+}
+variable "mask" {
+  description = "network mask /prefix"
+  type        = string
+  default     = "/24"
+}
 variable "ip_gateway" {
   description = "ip address gateway CIDR"
   type        = string
@@ -101,4 +124,71 @@ variable "cloud_init_user" {
   description = "Username cloud-init user"
   type        = string
   default     = "ubadmin"
+}
+
+variable "netbox_api_url" {
+  description = "Proxmox API Endpoint, e.g. 'https://netbox.example.com/api'"
+  type        = string
+  sensitive   = true
+  validation {
+    condition     = can(regex("(?i)^http[s]?://.*/", var.netbox_api_url))
+    error_message = "Netbox API Endpoint Invalid. Check URL - Scheme and Path required."
+  }
+}
+
+variable "netbox_token_secret" {
+  description = "Netbox API Token Value."
+  sensitive   = true
+} 
+
+variable "cluster_name" {
+  description = "Name Proxmox cluster in Netbox"
+  type        = string
+  default     = "pve-cluster"
+}
+variable "tenant" {
+  description = "Name tenant in Netbox"
+  type        = string
+  default     = "trustinfo"
+}
+variable "os_disk_size" {
+  description = "Size disk in Gb"
+  type        = number
+  default     = "20"
+}
+variable "data_disk_size" {
+  description = "Size disk in Gb"
+  type        = number
+  default     = "20"
+}
+variable "cpu_num" {
+  description = "Number of vCpu"
+  type        = number
+  default     = "4"
+}
+variable "memory_mb" {
+  description = "Memory in Mb"
+  type =  number
+  default = "4096"
+}
+
+variable "zabbix_server" {
+  description = "ip addr or dns name zabbix server"
+  type =  string
+  default = "10.20.15.42"
+}
+variable "zabbix_server_url" {
+  description = "ip addr or dns name zabbix server api"
+  type =  string
+  default = "10.20.15.42"
+}
+variable "zabbix_login" {
+  description = "Username zabbix admin"
+  type =  string
+  default = "admin"
+}
+variable "zabbix_password" {
+  description = "Password zabbix admin"
+  type =  string
+  default = "password"
 }
