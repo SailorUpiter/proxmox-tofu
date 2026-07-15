@@ -1,0 +1,68 @@
+
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: pdns-mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "SuperSecretRootPassword"
+      MYSQL_DATABASE: "powerdns"
+      MYSQL_USER: "powerdns"
+      MYSQL_PASSWORD: "StrongUserPassword"
+    volumes:
+      - ./mariadb-data:/var/lib/mysql
+    networks:
+      - pdns-net
+
+  powerdns:
+    image: pschiffe/pdns-mysql:latest
+    container_name: pdns-server
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8081:8081"
+    environment:
+      PDNS_gmysql_host: "mariadb"
+      PDNS_gmysql_port: "3306"
+      PDNS_gmysql_user: "powerdns"
+      PDNS_gmysql_password: "StrongUserPassword"
+      PDNS_gmysql_dbname: "powerdns"
+      # PDNS_master: "yes"           ← УДАЛЕНО! Больше не нужно
+      PDNS_api: "yes"
+      PDNS_api_key: "MySecretApiKey123"
+      PDNS_webserver: "yes"
+      PDNS_webserver_address: "0.0.0.0"
+      PDNS_webserver_port: "8081"
+      PDNS_webserver_allow_from: "0.0.0.0/0"
+      PDNS_default_soa_content: "ns1.lan hostmaster.lan 0 10800 3600 604800 3600"
+      PDNS_default_ttl: "3600"
+      PDNS_local_address: "0.0.0.0"
+      PDNS_local_port: "53"
+    networks:
+      - pdns-net
+
+  pdns-admin:
+    image: powerdnsadmin/pda-legacy:latest
+    container_name: pdns-admin
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - powerdns
+    environment:
+      PDA_DB_HOST: "mariadb"
+      PDA_DB_PORT: "3306"
+      PDA_DB_USER: "powerdns"
+      PDA_DB_PASSWORD: "StrongUserPassword"
+      PDA_DB_NAME: "powerdnsadmin"
+      PDA_PDNS_API_URL: "http://powerdns:8081/"
+      PDA_PDNS_API_KEY: "MySecretApiKey123"
+    networks:
+      - pdns-net
+
+networks:
+  pdns-net:
+    driver: bridge

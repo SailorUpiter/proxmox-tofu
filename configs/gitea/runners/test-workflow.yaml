@@ -1,0 +1,17 @@
+name: Test Workflow  
+
+on:  
+  push:  
+
+jobs:  
+  test:  
+    runs-on: ubuntu-latest  
+
+    steps:  
+      - name: Print environment variables  
+        run: |  
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"  
+          echo "GITHUB_SHA: $GITHUB_SHA"  
+          echo "GITHUB_REF: $GITHUB_REF"  
+          echo "GITHUB_ACTOR: $GITHUB_ACTOR"  
+          echo "PATH: $PATH"

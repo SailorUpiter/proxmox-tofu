@@ -1,0 +1,18 @@
+---
+pageInfo:
+  title: Home Lab
+sections: # An array of sections
+- name: Github
+  items: # An array of items
+  - title: GitHub
+    description: Source code and documentation on GitHub
+    icon: fab fa-github
+    url: https://github.com/SailorUpiter/mkdocs
+- name: Services
+  items:
+  - title: DNS
+    icon: favicon
+    url: http://192.168.1.2/
+  - title: Gitea
+    icon: https://icon-icons.com/ru/icon/gitea/146173
+    url: http://192.168.130.3:3000/

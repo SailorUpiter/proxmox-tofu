@@ -1,0 +1,38 @@
+@startuml
+!theme bluegray
+
+title Схема Кластера Кубера
+
+node "Proxy" as proxy
+
+node "Мастер-ноды" {
+    [Master-1]
+    [Master-2]
+    [Master-3]
+}
+
+node "Воркер-ноды" {
+    [Worker-1]
+    [Worker-2]
+    [Worker-3]
+}
+
+
+
+proxy --> [Master-1]
+proxy --> [Master-2]
+proxy --> [Master-3]
+
+[Master-1] --> [Worker-1]
+[Master-1] --> [Worker-2]
+[Master-1] --> [Worker-3]
+[Master-2] --> [Worker-1]
+[Master-2] --> [Worker-2]
+[Master-2] --> [Worker-3]
+[Master-3] --> [Worker-1]
+[Master-3] --> [Worker-2]
+[Master-3] --> [Worker-3]
+
+
+
+@enduml

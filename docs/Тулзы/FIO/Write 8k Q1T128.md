@@ -1,0 +1,13 @@
+```
+[fiotest]
+rw=write
+name=fiotest
+blocksize=8k
+filename=/mnt/pve/test/write
+size=100g
+ioengine=libaio
+iodepth=128
+numjobs=1
+runtime=60
+direct=1
+```

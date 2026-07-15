@@ -1,0 +1,12 @@
+@startuml
+top to bottom direction
+
+cloud "Интернет" as Internet
+
+rectangle "Proxy" as Proxy 
+rectangle "K8s" as K8s
+rectangle "Docker" as Docker
+Internet -- Proxy
+Proxy -- K8s
+Proxy -down- Docker
+@enduml

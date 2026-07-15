@@ -1,0 +1,24 @@
+services:
+  dashy:
+    # The image to pull + version. Can use `ghcr.io/lissy93/dashy` instead
+    image: lissy93/dashy:latest
+    # Optional container name
+    container_name: dashy
+    # Port to serve on (keep container port (second one) as 8080)
+    ports:
+      - 8080:8080
+    # Mount a directory containing your conf.yml and any other assets
+    volumes:
+      - ./user-data:/app/user-data
+    # Add any env vars for server here, if needed
+    environment:
+      - NODE_ENV=production
+    # Auto-start the container on boot
+    restart: unless-stopped
+    # Healthcheck to determine when container healthy
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck.js']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

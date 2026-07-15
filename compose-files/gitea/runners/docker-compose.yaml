@@ -1,0 +1,15 @@
+services:
+  runner-1:
+    image: gitea/act_runner:nightly
+    restart: always
+    environment:
+      - CONFIG_FILE=/config.yaml
+      - GITEA_INSTANCE_URL=http://192.168.1.3:3000/
+      - GITEA_RUNNER_REGISTRATION_TOKEN=token
+    volumes:
+      - ./runner1/config.yaml:/config.yaml
+      - ./runner1/data:/data
+      - ./runner1/cache:/root/.cache
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8088:8088"
