@@ -1,0 +1,26 @@
+# ---------- Stage 1: Build ----------
+FROM python:3.12-alpine AS builder
+
+WORKDIR /mkdocs
+
+RUN apk add --no-cache git
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY mkdocs.yml .
+COPY docs/ ./docs/
+
+RUN mkdocs build --clean
+
+# ---------- Stage 2: Runtime ----------
+FROM nginx:1.27-alpine
+
+COPY --from=builder /mkdocs/site /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+
+
+

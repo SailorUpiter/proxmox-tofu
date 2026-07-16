@@ -1,0 +1,19 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:18.11.2-ce.0
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.sailor.lab'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        # Add any other gitlab.rb configuration here, each on its own line
+        external_url 'https://gitlab.sailor.lab'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - '/mnt/data/gitlab/config:/etc/gitlab'
+      - '/mnt/data/gitlab/logs:/var/log/gitlab'
+      - '/mnt/data/gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'

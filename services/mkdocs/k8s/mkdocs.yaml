@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mkdocs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sailor-mkdocs
+  labels:
+    app: sailor-mkdocs
+    service: sailor-mkdocs
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8000
+  selector:
+    app: sailor-mkdocs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sailor-mkdocs
+  namespace: mkdocs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sailor-mkdocs
+  template:
+    metadata:
+      labels:
+        app: sailor-mkdocs
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: worker-2
+      containers:
+      - name: mkdocs
+        image: gitea.trastinfo.ru/sailor/mkdocs:7c2e6b6ecc3e32e5e4f59e6628af0a87d3acb005
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"

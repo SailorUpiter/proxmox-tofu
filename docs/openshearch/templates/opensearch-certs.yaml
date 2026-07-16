@@ -1,0 +1,40 @@
+cluster.name: kal-cluster
+node.name: opensearch-2
+node.roles: [ cluster_manager, data ]
+cluster.initial_cluster_manager_nodes: ["opensearch-cluster_manager"]
+discovery.seed_hosts: ["opensearch-1.sailor.com", "opensearch-2.sailor.com", "opensearch-3.sailor.com"]
+network.host: 0.0.0.0
+http.port: 9200
+plugins.security.nodes_dn:
+  - "CN=opensearch-1.sailor.com,OU=Lab,O=Sailor Lab,L=Moscow,ST=Moscow,C=RU"
+  - "CN=opensearch-2.sailor.com,OU=Lab,O=Sailor Lab,L=Moscow,ST=Moscow,C=RU"
+  - "CN=opensearch-3.sailor.com,OU=Lab,O=Sailor Lab,L=Moscow,ST=Moscow,C=RU"
+plugins.security.ssl.transport.keystore_filepath: /etc/opensearch/ssl/keystore.jks
+plugins.security.ssl.transport.keystore_password: Passw0rd
+plugins.security.ssl.transport.keystore_keypassword: Passw0rd
+plugins.security.ssl.transport.truststore_filepath: /etc/opensearch/ssl/truststore.jks
+plugins.security.ssl.transport.truststore_password: Passw0rd
+transport.ssl.enforce_hostname_verification: false
+
+plugins.security.ssl.http.enabled: true  #Whether to enable TLS on the REST layer. If enabled, only HTTPS is allowed. Optional. Default is false.
+plugins.security.ssl.http.keystore_filepath: /etc/opensearch/ssl/keystore.jks
+plugins.security.ssl.http.keystore_password: Passw0rd
+plugins.security.ssl.http.keystore_keypassword: Passw0rd
+plugins.security.ssl.http.truststore_filepath: /etc/opensearch/ssl/truststore.jks
+plugins.security.ssl.http.truststore_password: Passw0rd
+plugins.security.authcz.admin_dn:
+    - "EMAILADDRESS=medik19999@mail.ru,CN=grigory,OU=Lab,O=Sailor Lab,L=Moscow,ST=Moscow,C=RU"
+
+plugins.security.ssl.transport.pemcert_filepath: /etc/opensearch/ssl/node1.pem
+plugins.security.ssl.transport.pemkey_filepath: /etc/opensearch/ssl/node1-key.pem
+plugins.security.ssl.transport.pemtrustedcas_filepath: /etc/opensearch/ssl/root-ca.pem
+plugins.security.ssl.transport.enforce_hostname_verification: false
+plugins.security.ssl.http.enabled: true
+plugins.security.ssl.http.pemcert_filepath: /etc/opensearch/ssl/node1.pem
+plugins.security.ssl.http.pemkey_filepath: /etc/opensearch/ssl/node1-key.pem
+plugins.security.ssl.http.pemtrustedcas_filepath: /etc/opensearch/ssl/root-ca.pem
+
+# Path to directory where to store the data (separate multiple locations by comma):
+path.data: /var/lib/opensearch
+# Path to log files:
+path.logs: /var/log/opensearch

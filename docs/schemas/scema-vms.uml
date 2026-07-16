@@ -1,0 +1,27 @@
+@startuml
+!theme bluegray
+
+title Схема доступа к VM через Proxy
+cloud "Интернет" as Internet
+node "Proxy" as proxy
+
+node "Master-1" as m1
+node "Master-2" as m2
+node "Master-3" as m3
+
+node "Worker-1" as w1
+node "Worker-2" as w2
+node "Worker-3" as w3
+
+node "Docker" as d1
+Internet -down- proxy
+proxy -down- m1
+proxy -down- m2
+proxy -down- m3
+
+proxy -down- w1
+proxy -down- w2
+proxy -down- w3
+
+proxy -down- d1
+@enduml

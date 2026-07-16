@@ -1,0 +1,12 @@
+cluster.name: kal-cluster
+node.name: opensearch-3
+node.roles: [ cluster_manager, data ]
+cluster.initial_cluster_manager_nodes: ["opensearch-cluster_manager"]
+discovery.seed_hosts: ["opensearch-1.sailor.com", "opensearch-2.sailor.com", "opensearch-3.sailor.com"]
+network.host: 0.0.0.0
+http.port: 9200
+plugins.security.disabled: true
+# Path to directory where to store the data (separate multiple locations by comma):
+path.data: /var/lib/opensearch
+# Path to log files:
+path.logs: /var/log/opensearch

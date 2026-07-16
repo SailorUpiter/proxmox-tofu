@@ -1,0 +1,9 @@
+services:
+  mkdocks:
+    image: gitea.trastinfo.ru/sailor/mkdocs:latest
+    restart: always
+    volumes:
+      - ./mkdocs.yml:/mkdocs/mkdocs.yml
+      - ./docs:/mkdocs/docs
+    ports:
+      - "8000:8000"
