@@ -1,20 +1,26 @@
-FROM gitea.trastinfo.ru/sailor/pyhton:0.1
-WORKDIR /home/ubadmin/mkdocks
-COPY ./requirements.txt .
-RUN apk add --update --no-cache --virtual .build-deps gcc musl-dev &&\
-    apk add --no-cache git ca-certificates curl &&\
-    pip install --no-cache-dir --requirement ./requirements.txt &&\
-    apk del .build-deps &&\
-    rm ./requirements.txt
+# ---------- Stage 1: Build ----------
+FROM python:3.12-alpine AS builder
+
 WORKDIR /mkdocs
-COPY mkdocs.yml /mkdocs/mkdocs.yml
-COPY docs/* /mkdocs/docs/
-CMD ["mkdocs", "serve", "-a", "0.0.0.0:8000"]
 
+RUN apk add --no-cache git
 
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
+COPY mkdocs.yml .
+COPY docs/ ./docs/
 
+RUN mkdocs build --clean
 
+# ---------- Stage 2: Runtime ----------
+FROM nginx:1.27-alpine
+
+COPY --from=builder /mkdocs/site /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
 
 
 
