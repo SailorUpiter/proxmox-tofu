@@ -5,10 +5,10 @@ WORKDIR /mkdocs
 
 RUN apk add --no-cache git
 
-COPY requirements.txt .
+COPY services/mkdocs/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY mkdocs.yml .
+COPY services/mkdocs/mkdocs.yml .
 COPY docs/ ./docs/
 
 RUN mkdocs build --clean
